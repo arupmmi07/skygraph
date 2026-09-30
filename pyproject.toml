@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "skygraph"
+version = "0.2.0"
+description = "Code intelligence for coding agents — a graph of your code, served over MCP"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Arup Kumar Sarkar" }]
+keywords = ["mcp", "code-intelligence", "knowledge-graph", "ai-agents", "static-analysis"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Quality Assurance",
+]
+
+# One runtime dependency: the tree-sitter parsers. They are what give every language
+# other than Python its calls; without them a TypeScript or Java repository indexes as
+# declarations with nothing to traverse, and an install that quietly lacks them is the
+# common case, not the careful one. Everything else stays standard library.
+#
+# The pack fetches its compiled grammars from its own GitHub release on first use —
+# about 22–26 MB, once per pack version — and caches them in the user cache folder.
+# When they cannot load (no network on first use, no build for the platform) each file
+# falls to the pattern tier, says so, and `index_health` reports the language as read by
+# a pattern. The floor is the version the query files were written against; the cap is
+# the next major, whose grammars may rename the node types those files name.
+dependencies = ["tree-sitter>=0.23", "tree-sitter-language-pack>=1.20,<2"]
+
+[project.optional-dependencies]
+# The parsers used to be this extra. Kept so an install line written for it still works.
+parsers = ["tree-sitter>=0.23", "tree-sitter-language-pack>=1.20,<2"]
+
+[project.urls]
+Homepage = "https://github.com/arupmmi07/skygraph"
+Source = "https://github.com/arupmmi07/skygraph"
+Documentation = "https://github.com/arupmmi07/skygraph/tree/main/docs"
+Issues = "https://github.com/arupmmi07/skygraph/issues"
+Changelog = "https://github.com/arupmmi07/skygraph/blob/main/CHANGELOG.md"
+
+[project.scripts]
+skygraph = "skygraph.__main__:main"
+skygraph-mcp = "skygraph.__main__:serve_entry"
+
+[tool.setuptools]
+packages = ["skygraph"]
+
+[tool.setuptools.package-data]
+skygraph = ["queries/*.scm"]
